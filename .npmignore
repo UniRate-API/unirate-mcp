@@ -1,0 +1,9 @@
+src/
+test/
+examples/
+tsconfig.json
+.gitignore
+*.log
+.env*
+node_modules/
+coverage/

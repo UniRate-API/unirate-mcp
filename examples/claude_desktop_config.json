@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "unirate": {
+      "command": "npx",
+      "args": ["-y", "@unirate/mcp"],
+      "env": {
+        "UNIRATE_API_KEY": "your-api-key-here"
+      }
+    }
+  }
+}
