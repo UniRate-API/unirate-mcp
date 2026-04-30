@@ -9,6 +9,7 @@ A [Model Context Protocol](https://modelcontextprotocol.io) server for the [UniR
 - 📈 **Historical rates back to 1999** (Pro plan)
 - 🆓 **Free tier**, no credit card required — get a key at [unirateapi.com](https://unirateapi.com)
 - 🧩 Four tools, fully-typed inputs (Zod schemas), structured outputs
+- 🌐 **Stdio + Streamable HTTP/SSE transports** — run locally or host as a remote MCP endpoint
 - ⚡ Pure Node 18+, single dependency on `@modelcontextprotocol/sdk`
 
 ## Why this exists
@@ -74,6 +75,33 @@ git clone https://github.com/UniRate-API/unirate-mcp.git
 cd unirate-mcp
 npm install && npm run build
 UNIRATE_API_KEY=your-key node dist/index.js
+```
+
+### 4. Run as a remote endpoint (Streamable HTTP / SSE)
+
+By default the server uses **stdio**, which is what Claude Desktop and most MCP clients want. To host it as a remote endpoint instead — for shared use, multi-user deployments, or browser-based clients — start it in HTTP mode:
+
+```bash
+UNIRATE_API_KEY=your-key unirate-mcp --http 3001
+# or via env:
+UNIRATE_API_KEY=your-key UNIRATE_MCP_HTTP_PORT=3001 unirate-mcp
+```
+
+That exposes:
+
+- `POST /mcp` — Streamable HTTP endpoint (SSE-capable). Stateless: a fresh server is built per request, so the same process can serve many concurrent clients.
+- `GET /healthz` — JSON liveness probe (`{ "status": "ok", "server": "unirate-mcp", "version": "..." }`).
+
+Point any Streamable-HTTP-capable MCP client (Claude Desktop with remote server support, Cursor remote MCP, etc.) at `http://your-host:3001/mcp`. Drop it behind a reverse proxy + TLS for production.
+
+#### Programmatic / edge runtimes (Cloudflare Workers, Deno, Bun)
+
+The package exports `buildServer(client)` so you can wire it to whatever transport your runtime prefers. For Workers / Deno / Bun, use the SDK's `webStandardStreamableHttp` transport with an exported `buildServer` instance.
+
+```ts
+import { UnirateClient } from "@unirate/mcp/dist/client.js";
+import { buildServer } from "@unirate/mcp";
+// → connect to your runtime's preferred transport
 ```
 
 ## Tools

@@ -1,0 +1,27 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.UniRate-API/mcp",
+  "description": "Currency conversion and exchange rates for AI. 170+ currencies, historical data back to 1999.",
+  "repository": {
+    "url": "https://github.com/UniRate-API/unirate-mcp",
+    "source": "github"
+  },
+  "version": "0.2.1",
+  "websiteUrl": "https://unirateapi.com",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "@unirate/mcp",
+      "version": "0.2.1",
+      "transport": { "type": "stdio" },
+      "environmentVariables": [
+        {
+          "name": "UNIRATE_API_KEY",
+          "description": "UniRate API key — get a free one at https://unirateapi.com",
+          "isRequired": true,
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}

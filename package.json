@@ -1,7 +1,8 @@
 {
   "name": "@unirate/mcp",
-  "version": "0.1.0",
-  "description": "Model Context Protocol server for the UniRate API — currency conversion, exchange rates, historical data, and supported-currency lookup for AI assistants.",
+  "version": "0.2.1",
+  "description": "Model Context Protocol server for the UniRate API — currency conversion, exchange rates, historical data (back to 1999), and supported-currency lookup for AI assistants. Stdio + Streamable HTTP/SSE transports.",
+  "mcpName": "io.github.UniRate-API/mcp",
   "type": "module",
   "main": "dist/index.js",
   "bin": {

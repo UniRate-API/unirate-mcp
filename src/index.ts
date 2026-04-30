@@ -1,6 +1,8 @@
 #!/usr/bin/env node
+import { createServer as createHttpServer, type IncomingMessage, type ServerResponse } from "node:http";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import { z } from "zod";
 import {
   ProPlanRequiredError,
@@ -8,7 +10,7 @@ import {
   UnirateError,
 } from "./client.js";
 
-const VERSION = "0.1.0";
+const VERSION = "0.2.1";
 
 function formatError(err: unknown): string {
   if (err instanceof ProPlanRequiredError) {
@@ -179,6 +181,85 @@ export function buildServer(client: UnirateClient): McpServer {
   return server;
 }
 
+export async function startHttpServer(
+  port: number,
+  buildClient: () => UnirateClient,
+  options: { host?: string; path?: string } = {},
+): Promise<{ close: () => Promise<void>; port: number }> {
+  const path = options.path ?? "/mcp";
+  const host = options.host ?? "0.0.0.0";
+
+  const httpServer = createHttpServer(async (req: IncomingMessage, res: ServerResponse) => {
+    const url = req.url ?? "/";
+    if (url === "/healthz") {
+      res.writeHead(200, { "content-type": "application/json" });
+      res.end(JSON.stringify({ status: "ok", server: "unirate-mcp", version: VERSION }));
+      return;
+    }
+    if (!url.startsWith(path)) {
+      res.writeHead(404, { "content-type": "application/json" });
+      res.end(JSON.stringify({ error: "Not found" }));
+      return;
+    }
+
+    // Stateless: a fresh server+transport pair per request.
+    const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined });
+    const server = buildServer(buildClient());
+    res.on("close", () => {
+      void transport.close();
+      void server.close();
+    });
+    try {
+      await server.connect(transport);
+      await transport.handleRequest(req, res);
+    } catch (err) {
+      if (!res.headersSent) {
+        res.writeHead(500, { "content-type": "application/json" });
+        res.end(
+          JSON.stringify({
+            jsonrpc: "2.0",
+            error: { code: -32603, message: err instanceof Error ? err.message : String(err) },
+            id: null,
+          }),
+        );
+      }
+    }
+  });
+
+  await new Promise<void>((resolve) => httpServer.listen(port, host, resolve));
+  const address = httpServer.address();
+  const boundPort = typeof address === "object" && address ? address.port : port;
+  return {
+    port: boundPort,
+    close: () =>
+      new Promise<void>((resolve, reject) =>
+        httpServer.close((err) => (err ? reject(err) : resolve())),
+      ),
+  };
+}
+
+function parseHttpPort(argv: string[]): number | null {
+  const envPort = process.env.UNIRATE_MCP_HTTP_PORT;
+  if (envPort) {
+    const n = Number.parseInt(envPort, 10);
+    if (!Number.isFinite(n) || n <= 0) {
+      throw new Error(`UNIRATE_MCP_HTTP_PORT must be a positive integer, got '${envPort}'`);
+    }
+    return n;
+  }
+  const idx = argv.indexOf("--http");
+  if (idx === -1) return null;
+  const next = argv[idx + 1];
+  if (next && !next.startsWith("-")) {
+    const n = Number.parseInt(next, 10);
+    if (!Number.isFinite(n) || n <= 0) {
+      throw new Error(`--http expects a positive port, got '${next}'`);
+    }
+    return n;
+  }
+  return 3001;
+}
+
 async function main(): Promise<void> {
   const apiKey = process.env.UNIRATE_API_KEY;
   if (!apiKey) {
@@ -187,6 +268,15 @@ async function main(): Promise<void> {
         "Get a free key at https://unirateapi.com and pass it as UNIRATE_API_KEY.\n",
     );
     process.exit(1);
+  }
+
+  const httpPort = parseHttpPort(process.argv.slice(2));
+  if (httpPort !== null) {
+    const { port } = await startHttpServer(httpPort, () => new UnirateClient({ apiKey }));
+    process.stderr.write(
+      `unirate-mcp listening on http://0.0.0.0:${port}/mcp (Streamable HTTP / SSE)\n`,
+    );
+    return;
   }
 
   const client = new UnirateClient({ apiKey });
