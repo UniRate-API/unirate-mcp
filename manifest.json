@@ -1,0 +1,56 @@
+{
+  "manifest_version": "0.2",
+  "name": "unirate-mcp",
+  "display_name": "UniRate MCP",
+  "version": "0.2.2",
+  "description": "Currency conversion and exchange rates for AI assistants. 170+ currencies, historical data back to 1999.",
+  "long_description": "MCP server for the UniRate API — convert between 170+ currencies (fiat + major crypto), fetch latest exchange rates, list supported currencies, and (with a Pro plan) query historical rates back to 1999. Free tier covers conversion and current rates with no credit card required. Stdio transport for local MCP clients (Claude Desktop, Cursor, Continue, Cline) plus an optional Streamable HTTP/SSE mode for remote hosting.",
+  "author": {
+    "name": "UniRate",
+    "email": "admin@unirateapi.com",
+    "url": "https://unirateapi.com"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/UniRate-API/unirate-mcp",
+  "documentation": "https://github.com/UniRate-API/unirate-mcp#readme",
+  "support": "https://github.com/UniRate-API/unirate-mcp/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/UniRate-API/unirate-mcp"
+  },
+  "keywords": [
+    "currency",
+    "exchange-rates",
+    "fx",
+    "finance",
+    "forex",
+    "historical-rates",
+    "unirate"
+  ],
+  "server": {
+    "type": "node",
+    "entry_point": "dist/index.js",
+    "mcp_config": {
+      "command": "node",
+      "args": ["${__dirname}/dist/index.js"],
+      "env": {
+        "UNIRATE_API_KEY": "${user_config.api_key}"
+      }
+    }
+  },
+  "user_config": {
+    "api_key": {
+      "type": "string",
+      "title": "UniRate API key",
+      "description": "Get a free key at https://unirateapi.com — no credit card required. Pro plan unlocks historical rates back to 1999 and commodities.",
+      "sensitive": true,
+      "required": true
+    }
+  },
+  "compatibility": {
+    "platforms": ["darwin", "linux", "win32"],
+    "runtimes": {
+      "node": ">=18.0.0"
+    }
+  }
+}

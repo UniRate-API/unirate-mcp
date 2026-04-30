@@ -77,15 +77,26 @@ export class UnirateClient {
   private readonly userAgent: string;
 
   constructor(opts: UnirateClientOptions) {
-    if (!opts.apiKey) throw new AuthenticationError("API key is required");
-    this.apiKey = opts.apiKey;
+    // Allow empty apiKey at construction so MCP host scanners can enumerate
+    // tools without a key set. Calls without a key will fail at request time
+    // with the API's own 401, which maps to AuthenticationError below.
+    this.apiKey = opts.apiKey ?? "";
     this.baseUrl = opts.baseUrl ?? "https://api.unirateapi.com";
     this.timeoutMs = opts.timeoutMs ?? 30_000;
     this.fetchImpl = opts.fetchImpl ?? (globalThis.fetch as unknown as FetchLike);
-    this.userAgent = opts.userAgent ?? "unirate-mcp/0.1.0";
+    this.userAgent = opts.userAgent ?? "unirate-mcp/0.2.2";
+  }
+
+  private requireApiKey(): void {
+    if (!this.apiKey) {
+      throw new AuthenticationError(
+        "Missing UniRate API key. Set UNIRATE_API_KEY (get a free key at https://unirateapi.com).",
+      );
+    }
   }
 
   private async request<T>(path: string, params: Record<string, string | number>): Promise<T> {
+    this.requireApiKey();
     const qs = new URLSearchParams();
     for (const [k, v] of Object.entries(params)) qs.set(k, String(v));
     qs.set("api_key", this.apiKey);

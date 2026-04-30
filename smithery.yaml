@@ -1,6 +1,6 @@
 name: unirate-mcp
 description: Currency conversion and exchange rates for AI assistants. 170+ currencies (fiat + major crypto), historical data back to 1999, free tier, MIT-licensed.
-version: 0.2.1
+version: 0.2.2
 homepage: https://github.com/UniRate-API/unirate-mcp
 license: MIT
 keywords:

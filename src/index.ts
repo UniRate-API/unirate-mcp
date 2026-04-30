@@ -10,7 +10,7 @@ import {
   UnirateError,
 } from "./client.js";
 
-const VERSION = "0.2.1";
+const VERSION = "0.2.2";
 
 function formatError(err: unknown): string {
   if (err instanceof ProPlanRequiredError) {
@@ -261,13 +261,16 @@ function parseHttpPort(argv: string[]): number | null {
 }
 
 async function main(): Promise<void> {
-  const apiKey = process.env.UNIRATE_API_KEY;
+  const apiKey = process.env.UNIRATE_API_KEY ?? "";
   if (!apiKey) {
+    // Warn but don't exit — the server still advertises its tools so MCP-host
+    // scanners (Smithery, etc.) can enumerate capabilities. Tool calls will
+    // surface a clear AuthenticationError at invocation time.
     process.stderr.write(
-      "ERROR: UNIRATE_API_KEY environment variable is required.\n" +
-        "Get a free key at https://unirateapi.com and pass it as UNIRATE_API_KEY.\n",
+      "WARN: UNIRATE_API_KEY environment variable is not set. " +
+        "Tool calls will fail with an authentication error. " +
+        "Get a free key at https://unirateapi.com.\n",
     );
-    process.exit(1);
   }
 
   const httpPort = parseHttpPort(process.argv.slice(2));

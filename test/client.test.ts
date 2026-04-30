@@ -70,8 +70,10 @@ describe("UnirateClient HTTP plumbing", () => {
     expect(captured).not.toContain("from=usd");
   });
 
-  it("rejects empty API key at construction", () => {
-    expect(() => new UnirateClient({ apiKey: "" })).toThrow(AuthenticationError);
+  it("defers empty-API-key error from construction to first request", async () => {
+    // Construction succeeds so MCP host scanners can enumerate tools without a key.
+    const c = new UnirateClient({ apiKey: "" });
+    await expect(c.getRate("USD", "EUR")).rejects.toThrow(AuthenticationError);
   });
 });
 

@@ -6,13 +6,13 @@
     "url": "https://github.com/UniRate-API/unirate-mcp",
     "source": "github"
   },
-  "version": "0.2.1",
+  "version": "0.2.2",
   "websiteUrl": "https://unirateapi.com",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "@unirate/mcp",
-      "version": "0.2.1",
+      "version": "0.2.2",
       "transport": { "type": "stdio" },
       "environmentVariables": [
         {
