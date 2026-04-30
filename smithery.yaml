@@ -1,0 +1,33 @@
+name: unirate-mcp
+description: Currency conversion and exchange rates for AI assistants. 170+ currencies (fiat + major crypto), historical data back to 1999, free tier, MIT-licensed.
+version: 0.2.1
+homepage: https://github.com/UniRate-API/unirate-mcp
+license: MIT
+keywords:
+  - currency
+  - exchange-rates
+  - fx
+  - finance
+  - forex
+  - historical-rates
+  - mcp
+  - model-context-protocol
+  - unirate
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    properties:
+      apiKey:
+        type: string
+        description: "UniRate API key. Get a free one at https://unirateapi.com — no credit card required. Pro plan unlocks historical rates back to 1999 and commodity prices."
+    required:
+      - apiKey
+  commandFunction: |-
+    (config) => ({
+      command: "npx",
+      args: ["-y", "@unirate/mcp"],
+      env: {
+        UNIRATE_API_KEY: config.apiKey
+      }
+    })
