@@ -174,22 +174,6 @@ npm test            # 24 mock tests
 UNIRATE_LIVE=1 UNIRATE_API_KEY=... npm run test:live  # +4 live free-tier tests
 ```
 
-## Related projects
-
-UniRate offers official client libraries in 9 languages:
-
-- [Python](https://github.com/UniRate-API/unirate-api-python) (`pip install unirate-api`)
-- [Node.js](https://github.com/UniRate-API/unirate-api-nodejs) (`npm install unirate-api`)
-- [Swift](https://github.com/UniRate-API/unirate-api-swift)
-- [Java](https://github.com/UniRate-API/unirate-api-java)
-- [Go](https://github.com/UniRate-API/unirate-api-go)
-- [Rust](https://github.com/UniRate-API/unirate-api-rust)
-- [Ruby](https://github.com/UniRate-API/unirate-api-ruby)
-- [PHP](https://github.com/UniRate-API/unirate-api-php)
-- [.NET](https://github.com/UniRate-API/unirate-api-dotnet)
-
-Plus an [n8n community node](https://github.com/UniRate-API/n8n-nodes-unirate).
-
 <!-- unirate-ecosystem-footer:start -->
 ## Other UniRate clients
 
