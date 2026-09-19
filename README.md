@@ -96,13 +96,17 @@ Point any Streamable-HTTP-capable MCP client (Claude Desktop with remote server 
 
 #### Docker
 
-Multi-arch images (linux/amd64, linux/arm64) are published to the
-[GitHub Container Registry](https://github.com/UniRate-API/unirate-mcp/pkgs/container/unirate-mcp):
+Multi-arch images (linux/amd64, linux/arm64) are published to both the
+[GitHub Container Registry](https://github.com/UniRate-API/unirate-mcp/pkgs/container/unirate-mcp)
+(`ghcr.io/unirate-api/unirate-mcp`) and [Docker Hub](https://hub.docker.com/r/unirate/unirate-mcp)
+(`unirate/unirate-mcp`) — use whichever you prefer:
 
 ```bash
 # stdio mode (for local AI clients — pipe stdin/stdout)
 docker run --rm -i -e UNIRATE_API_KEY="your-key" \
   ghcr.io/unirate-api/unirate-mcp:latest
+# ...or from Docker Hub:
+#   docker run --rm -i -e UNIRATE_API_KEY="your-key" unirate/unirate-mcp:latest
 
 # HTTP/SSE mode (hosted endpoint on :3001)
 docker run --rm -p 3001:3001 -e UNIRATE_API_KEY="your-key" \
