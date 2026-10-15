@@ -2,7 +2,7 @@
   "manifest_version": "0.2",
   "name": "unirate-mcp",
   "display_name": "UniRate MCP",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Currency conversion and exchange rates for AI assistants. 170+ currencies, historical data back to 1999.",
   "long_description": "MCP server for the UniRate API — convert between 170+ currencies (fiat + major crypto), fetch latest exchange rates, list supported currencies, and (with a Pro plan) query historical rates back to 1999. Free tier covers conversion and current rates with no credit card required. Stdio transport for local MCP clients (Claude Desktop, Cursor, Continue, Cline) plus an optional Streamable HTTP/SSE mode for remote hosting.",
   "author": {
